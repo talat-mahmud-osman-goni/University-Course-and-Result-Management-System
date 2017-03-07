@@ -1,0 +1,79 @@
+﻿@model UniversityResultManagement.Models.Course
+@{
+    ViewBag.Title = "Course Save";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    string message = ViewBag.Message;
+    string code = ViewBag.Code;
+    string name = ViewBag.Name;
+    List<SelectListItem> getSelectDepartments = ViewBag.GetSelectDepartments;
+    List<SelectListItem> getSelectSemester = ViewBag.GetSelectSemester;
+}
+
+@if (message == "yes")
+{
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Course Saved Successfully.
+    </div>
+}
+else if (message == "no")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> Save Failed.
+    </div>
+}
+else if (message == "code not unique")
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong>Course Code: "@code" Already Have in Course List.
+        </div>
+    }
+    else if (message == "name not unique")
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong>Course Name: "@name" Already Have in Course List.
+        </div>
+    }
+@using (Html.BeginForm())
+{
+    <div style="margin-left: 400px; width: 450px">
+        <h1 style="font-size: 25px">Save Course</h1>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Code)
+            @Html.TextBoxFor(m => m.Code, new {@class = "form-control", @placeholder = "Course Code"})
+            @Html.ValidationMessageFor(m => m.Code)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @placeholder = "Course Name"})
+            @Html.ValidationMessageFor(m => m.Name)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Credit, "Credit")
+            @Html.TextBoxFor(m => m.Credit, new {@class = "form-control", @placeholder = "Credit"})
+            @Html.ValidationMessageFor(m => m.Credit)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description)
+            @Html.TextAreaFor(m => m.Description, new {@class = "form-control", @placeholder = "Course Description"})
+            @Html.ValidationMessageFor(m => m.Description)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DepartmentId, "Department")
+            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(getSelectDepartments, "Value", "Text"), "Select Department", new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.DepartmentId)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SemesterId, "Semester")
+            @Html.DropDownListFor(m => m.SemesterId, new SelectList(getSelectSemester, "Value", "Text"), "Select Semester", new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.SemesterId)
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" value="save" type="submit">Save</button>
+        </div>
+    </div>
+}

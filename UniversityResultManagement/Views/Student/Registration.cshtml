@@ -1,0 +1,116 @@
+﻿@model UniversityResultManagement.Models.Student
+@{
+    ViewBag.Title = "Register Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    List<SelectListItem> getSelectDepartment = ViewBag.GetSelectDepartment;
+    string message = ViewBag.Message;
+}
+<link href="~/Content/bootstrap-datepicker.min.css" rel="stylesheet" />
+@if (message == "yes")
+{
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Student Saved Successfully
+        <table>
+            <tr>
+                <td>Registration No</td>
+                <td>: @ViewBag.RegistrationNo</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>: @ViewBag.Name</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>: @ViewBag.Email</td>
+            </tr>
+            <tr>
+                <td>Contact No.</td>
+                <td>: @ViewBag.ContactNo</td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>: @ViewBag.Date</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>: @ViewBag.Address</td>
+            </tr>
+            <tr>
+                <td>Department</td>
+                <td>: @ViewBag.DeptName</td>
+            </tr>
+        </table>
+    </div>
+}
+else if (message == "no")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> Save Failed.
+    </div>
+}
+else if (message == "email not unique")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong>Student's Email: @ViewBag.Email Already Have in Student List.
+    </div>
+}
+@using (Html.BeginForm())
+{
+    <div style="margin-left: 400px; width: 450px">
+        <h1 style="font-size: 25px">Register Student</h1>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @placeholder = "Name"})
+            @Html.ValidationMessageFor(m => m.Name)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email, new {@type = "email", @class = "form-control", @placeholder = "Ex: abc@example.com"})
+            @Html.ValidationMessageFor(m => m.Email)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ContactNo)
+            @Html.TextBoxFor(m => m.ContactNo, new {@type = "number", @class = "form-control", @placeholder = "Contact Number"})
+            @Html.ValidationMessageFor(m => m.ContactNo)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Date)
+            @Html.TextBoxFor(m => m.Date, new {@class = "form-control", @id = "date", @readonly="readonly"})
+            @Html.ValidationMessageFor(m => m.Date)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Address)
+            @Html.TextAreaFor(m => m.Address, new {@class = "form-control", @placeholder = "Address"})
+            @Html.ValidationMessageFor(m => m.Address)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DepartmentId)
+            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(getSelectDepartment, "Value", "Text"), "Select Department", new {@class = "form-control"})
+            @Html.ValidationMessageFor(m => m.DepartmentId)
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" value="save" type="submit">Register</button>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {           
+            $("#date").datepicker({
+                dateFormat: "yy-mm-dd",
+                weekStart: 6,
+            todayBtn: "linked",
+            daysOfWeekHighlighted: "5"
+            }).val();
+            $("#date").datepicker("setDate", new Date());
+        });
+    </script>
+}

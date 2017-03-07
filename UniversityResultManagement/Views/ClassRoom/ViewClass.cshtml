@@ -1,0 +1,59 @@
+﻿@model UniversityResultManagement.Models.ViewModel.ViewClassSchedule
+@{
+    ViewBag.Title = "View Class Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> getSelectDepartment = ViewBag.GetSelectDepartment;
+}
+@using (Html.BeginForm())
+{
+    <div style="width: 650px; margin-left: 250px">
+        <h1 style="font-size: 25px; margin-left: 210px">View Class Schedule</h1>
+        <div class="form-group" style="margin-left: 190px">
+            @Html.LabelFor(m => m.DepartmentId, "Select Department")
+            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(getSelectDepartment, "Value", "Text"), "Select Department", new {@class = "form-control", @id = "departmentId"})
+        </div>
+    </div>
+    <div class="form-group" style="width: 800px; margin-left: 180px">
+        <table class="table table-bordered" id="viewScheduleTable">
+            <thead id="viewScheduleHead">
+            <tr>
+                <th>Course Code</th>
+                <th>Name</th>
+                <th>Schedule Information</th>
+            </tr>
+            </thead>
+            <tbody id="ViewScheduleBody">
+            
+            </tbody>
+        </table>
+    </div>
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script>
+        $(document).ready(function () {            
+            $("#viewScheduleTable").hide();
+            $("#departmentId").change(function () {
+                var deptId = $("#departmentId").val();
+                $("#ViewScheduleBody").empty();
+                var json = { departmentId: deptId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '/ClassRoom/GetClassScheduleByDeptId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {                       
+                        $("#viewScheduleTable").show();
+                        $.each(data, function (key, value) {
+                            $("#ViewScheduleBody").append('<tr><td>' + value.Code + '</td><td>' + value.Name + '</td><td>' + value.ScheduleInfo + '</td></tr>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

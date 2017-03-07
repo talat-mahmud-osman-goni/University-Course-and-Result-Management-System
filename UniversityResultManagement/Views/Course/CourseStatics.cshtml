@@ -1,0 +1,62 @@
+﻿@model UniversityResultManagement.Models.ViewModel.CourseStatics
+@{
+    ViewBag.Title = "Course Statics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<SelectListItem> getSelectDepartments = ViewBag.GetSelectDepartments;
+}
+
+@using (Html.BeginForm())
+{
+    <div style="width: 650px; margin-left: 250px">
+        <h1 style="font-size: 25px; margin-left: 220px">View Course Statics</h1>
+        <div class="form-group" style="margin-left: 100px">
+            @Html.LabelFor(m => m.DepartmentId, "Department")
+            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(getSelectDepartments, "Value", "Text"), "Select Department", new {@class = "form-control", @id = "departmentId",})
+        </div>
+        <div class="form-group">
+            <h1 style="font-size: 20px;" id="h1Info">Course Information</h1>
+        </div>
+        <table class="table table-bordered" id="courseInfoTable">
+            <thead id="courseInfoThead">
+            <tr>
+                <th>Code</th>
+                <th>Name/Title</th>
+                <th>Semester</th>
+                <th>Assigned To</th>
+            </tr>
+            </thead >
+            <tbody id="courseInfoTbody"></tbody>
+
+        </table>
+    </div>
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script>
+        $(document).ready(function() {
+            $("#h1Info").hide();
+            $("#courseInfoTable").hide();
+            $("#departmentId").change(function() {
+                var deptId = $("#departmentId").val();
+                $("#courseInfoTbody").empty();
+                var json = { departmentId: deptId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Course/GetAllCourseStatics',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+                        $("#h1Info").show();
+                        $("#courseInfoTable").show();
+                        $.each(data, function(key, value) {
+                            $("#courseInfoTbody").append('<tr><td>' + value.Code + '</td><td>' + value.Name + '</td><td>' + value.Semester + '</td><td>' + value.AssignedTo + '</td></tr>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

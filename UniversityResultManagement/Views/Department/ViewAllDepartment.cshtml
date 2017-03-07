@@ -1,0 +1,29 @@
+﻿@using UniversityResultManagement.Models
+@model UniversityResultManagement.Models.Department
+@{
+    ViewBag.Title = "View Departments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    List<Department> allDepartment = ViewBag.allDepartment;
+}
+
+<div style ="width: 650px; margin-left: 250px">
+    <h1 style="font-size: 25px; margin-left: 220px ">View All Department</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 150px">Code</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Department aDepartment in allDepartment)
+            {
+                <tr>
+                    <td>@aDepartment.Code</td>
+                    <td>@aDepartment.Name </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,88 @@
+﻿@model UniversityResultManagement.Models.ViewModel.ViewResult
+@{
+    ViewBag.Title = "View Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    List<SelectListItem> getSelectRegNo = ViewBag.GetSelectRegNo;
+}
+@using (Html.BeginForm())
+{
+    <div style="width: 650px; margin-left: 250px">
+        <h1 style="font-size: 25px; margin-left: 220px">View Student Result</h1>
+        <div class="form-group" style="margin-left: 200px">
+            <div class="form-group">
+                @Html.LabelFor(m => m.StudentId)
+                @Html.DropDownListFor(m => m.StudentId, new SelectList(getSelectRegNo, "Value", "Text"), "Select Reg. No.", new {@class = "form-control", @id = "studentId"})
+                @Html.ValidationMessageFor(m => m.StudentId)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name)
+                @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @placeholder = "Name", @disabled = "disabled", @id = "name"})
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new {@class = "form-control", @placeholder = "Email", @disabled = "disabled", @id = "email"})
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.DepartmentName)
+                @Html.TextBoxFor(m => m.DepartmentName, new {@class = "form-control", @placeholder = "Department", @disabled = "disabled", @id = "departmentName"})
+            </div>
+        </div>
+        <table class="table table-bordered" id="viewResultTBL">
+            <thead id="viewResultHead">
+            <tr>
+                <th style="width:150px">Course Code</th>
+                <th style="width: 350px">Name</th>
+                <th style="width: 150px">Grade</th>
+            </tr>
+            </thead>
+            <tbody id="viewResultBody"></tbody>
+        </table>
+    </div>       
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script>
+        $(Document).ready(function() {
+            $("#viewResultTBL").hide();
+            $("#studentId").change(function() {
+                var stdntId = $("#studentId").val();
+                $("#name").val('');
+                $("#email").val('');
+                $("#departmentName").val('');
+                $("#viewResultBody").empty();
+
+                var json = { studentId: stdntId };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentByRegNo", "CourseEnroll")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+                        $.each(data, function(key, value) {
+                            $("#name").val(value.Name);
+                            $("#email").val(value.Email);
+                            $("#departmentName").val(value.DepartmentName);
+                        });
+                    }
+                });
+                json = { studentId: stdntId };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetResultByStudentId", "CourseEnroll")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+
+                        $("#viewResultTBL").show();
+                        $.each(data, function(key, value) {
+                            $("#viewResultBody").append('<tr><td>' + value.CourseCode + '</td><td>' + value.CourseName + '</td><td>' + value.Grade + '</td></tr>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

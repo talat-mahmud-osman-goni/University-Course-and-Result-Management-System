@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Unassign All Courses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string message = ViewBag.Message;
+}
+@if (message == "yes")
+{
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Unassigned All Courses Successfully.
+    </div>
+}
+else if (message == "no")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> Unassigned Failed.
+    </div>
+}
+@using (Html.BeginForm())
+{
+    <div style="width: 650px; margin-left: 250px">
+        <h1 style="font-size: 25px; margin-left: 220px">Unassign All Courses</h1>
+        <div class="form-group" style="margin-left: 245px">
+            <button class="btn btn-primary" id="unAssignBtn" value="save"style="background-color: red; width: 200px;height: 50px" type="submit" onclick="return alertbox()">Unassign Courses</button>
+        </div>
+    </div>  
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Styles.Render("~/Content/cssjqryUi")
+    <script>
+        function alertbox() {
+            return confirm("Are You Sure to Unassign All Courses?");
+
+        }
+    </script>
+}

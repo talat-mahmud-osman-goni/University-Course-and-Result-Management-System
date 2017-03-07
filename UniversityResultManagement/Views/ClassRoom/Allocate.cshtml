@@ -1,0 +1,117 @@
+﻿@model UniversityResultManagement.Models.AllocateClassroom
+@{
+    ViewBag.Title = "Allocate Classroom";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> getSelectDepartment = ViewBag.GetSelectDepartment;
+    List<SelectListItem> getSelectDay = ViewBag.GetSelectDay;
+    List<SelectListItem> getSelectRoom = ViewBag.GetSelectRoom;
+    string message = ViewBag.Message;
+}
+@if (message == "yes")
+{
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Classroom Allocated Successfully.
+    </div>
+}
+else if (message == "no")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> Allocation Failed.
+    </div>
+}
+else if (message == "allocation not unique")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong>This Class Room is Already Allocated in the Same Time and The Same Day.
+    </div>
+}
+@*else if (message == "name not unique")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong>Course Name: "@name" Already Have in Course List.
+    </div>
+}*@
+@using (Html.BeginForm())
+{
+    <div style="margin-left: 400px; width: 450px">
+        <h1 style="font-size: 25px">Allocate Classroom</h1>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DepartmentId)
+            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(getSelectDepartment, "Value", "Text"), "Select Department", new {@class = "form-control", @id = "departmentId"})
+            @Html.ValidationMessageFor(m => m.DepartmentId)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CourseId)
+            @Html.DropDownListFor(m => m.CourseId, new SelectList(new List<object> {}, "Value", "Text"), new {@class = "form-control", @id = "courseId"})
+            @Html.ValidationMessageFor(m => m.CourseId)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.RoomId)
+            @Html.DropDownListFor(m => m.RoomId, new SelectList(getSelectRoom, "Value", "Text"), "Select Room No.", new { @class = "form-control", @id = "roomId" })
+            @Html.ValidationMessageFor(m => m.RoomId)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DayId)
+            @Html.DropDownListFor(m => m.DayId, new SelectList(getSelectDay, "Value", "Text"), "Select Day", new {@class = "form-control", @id = "dayId"})
+            @Html.ValidationMessageFor(m => m.DayId)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FromTime)
+            @Html.TextBoxFor(m => m.FromTime, new {@class = "form-control datepicker", @type = "time"})
+            @Html.ValidationMessageFor(m=>m.FromTime)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ToTime)
+            @Html.TextBoxFor(m => m.ToTime, new {@class = "form-control datepicker", @type = "time"})
+            @Html.ValidationMessageFor(m => m.ToTime)
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" id="allocate" value="allocate" type="submit">Allocate</button>
+        </div>
+    </div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+    <script>
+        webshims.setOptions('forms-ext', { types: 'date' });
+        webshims.polyfill('forms forms-ext');
+        $.webshims.formcfg = {
+            en: {
+                
+                dFormat: '-',
+                dateSigns: '-',
+                patterns: {
+                    h: "h-m-s"
+                }
+            }
+        };
+    </script>
+<script>
+        $(Document).ready(function() {
+            $("#departmentId").change(function () {
+                var deptId = $("#departmentId").val();
+                $("#courseId").empty();
+                var json = { departmentId: deptId };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCoursebyDepartmentId", "ClassRoom")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+                        $("#courseId").append('<option value=' + "" + '>' + "Select Course" + '</option>');
+                        $.each(data, function(key, value) {
+                            $("#courseId").append('<option value=' + value.Id + '>' + value.Code + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+</script>
+}

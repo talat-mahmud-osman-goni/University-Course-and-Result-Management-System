@@ -1,0 +1,57 @@
+﻿@model UniversityResultManagement.Models.Department
+@{
+    ViewBag.Title = "Department Save";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    string message = ViewBag.message;
+    string name = ViewBag.name;
+    string code = ViewBag.code;
+}
+@if (message == "yes")
+{
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+        <strong>Success!</strong> Department Saved Successfully.
+    </div>
+}
+else if (message == "no")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> Save Failed.
+    </div>
+}
+else if (message == "code not unique")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong>Department Code: "@code" Already Have in Department List.
+    </div>
+}
+else if (message == "name not unique")
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong>Department Name: "@name" Already Have in Department List.
+    </div>
+}
+@using (Html.BeginForm())
+{
+    <div style="width: 400px; margin-left: 450px">
+        <h1 style="font-size: 25px">Save Department</h1>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Code)
+            @Html.TextBoxFor(m => m.Code, new {@class = "form-control", @placeholder = "Department Code"})
+            @Html.ValidationMessageFor(m => m.Code)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @placeholder = "Department Name"})
+            @Html.ValidationMessageFor(m => m.Name)
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit" value="save">Save</button>
+        </div>
+    </div>
+}
